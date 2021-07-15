@@ -1,0 +1,131 @@
+<div id="file-browser-dialog" (click)="disableFolderContextMenu(); disableImageContextMenu(); clearSelectImage();">
+    <div id="file-browser-header" mat-dialog-title cdkDrag cdkDragRootElement=".cdk-overlay-pane" cdkDragHandle>
+        <span>File Browser</span>
+        <mat-icon mat-dialog-close>close</mat-icon>
+    </div>
+    <div id="file-browser-body">
+        <div class="menu-bar">
+            <div class="left-menu">
+                <button *ngIf="!data?.specTarget" (click)="isShowSideBar = !isShowSideBar" class="btn-toggle" mat-icon-button color="default">
+                    <mat-icon>menu</mat-icon>
+                </button>
+                <div class="folder-tool-bar">
+                    <button *ngIf="!data?.specTarget" class="folder-tool-bar-item" title="Tạo thư mục mới" mat-raised-button color="default" (click)="doClickAddFolderButton()">
+                        <mat-icon>add_circle</mat-icon>
+                        Mới
+                    </button>
+                    
+                    <button *ngIf="!data?.specTarget" class="folder-tool-bar-item" title="Tải ảnh lên" mat-raised-button color="default" (click)="cameraInput.click()">
+                        <mat-icon>add_circle</mat-icon>
+                        {{listImageUpload?.length > 0 ? 'Chọn thêm' : 'Tải lên'}}
+                    </button>
+    
+                    <button class="folder-tool-bar-item" title="Xem ảnh" [class.d-none]="imageSelected?.data.trim() === '' && imageSelected?.data.trim() === ''" mat-raised-button color="default" (click)="doClickPreviewImageBtn($event);">
+                        <mat-icon>visibility</mat-icon>
+                        Xem ảnh
+                    </button>
+                    <button class="folder-tool-bar-item" title="Chọn ảnh" [class.d-none]="imageSelected?.data.trim() === '' && imageSelected?.data.trim() === ''" mat-raised-button color="default" (click)="doClickChooseImageBtn($event);">
+                        <mat-icon>task_alt</mat-icon>
+                        Chọn
+                    </button>
+                    <button *ngIf="!data?.specTarget" class="folder-tool-bar-item" title="Xóa ảnh" [class.d-none]="imageSelected?.data.trim() === '' && imageSelected?.data.trim() === ''" mat-raised-button color="default" (click)="doDeleteImage($event);">
+                        <mat-icon>delete_forever</mat-icon>
+                        Xóa ảnh
+                    </button>
+                </div>
+            </div>
+            <div *ngIf="false">
+                <button class="btn-toggle" mat-icon-button>
+                    <mat-icon>settings</mat-icon>
+                </button>
+            </div>
+        </div>
+        <mat-drawer-container id="draw-container" autosize>
+            <mat-drawer #drawer [opened]="!data?.specTarget && isShowSideBar" class="side-nav" [mode]="'side'">
+                <app-simple-menu [hasSpecTarget]="data?.specTarget" [simpleMenuData]="simpleMenuData" (selectItem)="handlerSelectFolder($event)" [selectedItem]= "folderSelected.path" (contextMenuConfig)= "handlerFolderContextMenuConfig($event)" >
+                </app-simple-menu>
+
+            </mat-drawer>
+            <mat-drawer-content class="mat-drawer-content">
+                <div class="folder-path">{{folderActive}}</div>
+                <div *ngIf="listImageUpload?.length > 0" class="image-upload">
+                    <div class="image-upload-header">
+                        <div style="display: flex; align-items: center;">{{listImageUpload?.length >0? listImageUpload.length : 0}} tệp đã chọn</div>
+                        <div class="folder-tool-bar">
+                            <button class="folder-tool-bar-item" title="Hủy" mat-raised-button color="default"
+                                (click)="doClickCancelUploadImage()">
+                                <mat-icon>close</mat-icon>
+                                Hủy
+                            </button>
+                            <button class="folder-tool-bar-item" title="Tải ảnh lên" mat-raised-button color="default"
+                                (click)="doUploadImages()">
+                                <mat-icon>upload</mat-icon>
+                                Tải lên
+                            </button>
+                        </div>
+                    </div>
+                    <!-- IMAGES RESULT -->
+                    <div class="image-upload-area wrap-box">
+                        <div class="result-item" [class.h-small]="drawer.opened && this.commonService.isMobile()" *ngFor="let item of listImageUpload">
+                            <div class="item">
+                                <div class="image">
+                                    <img *ngIf="item.path != undefined && item.path != null && item.path.trim() != ''"
+                                        [src]="apiUrlReadImage + item.path" alt="">
+                                    <img *ngIf="item.path == undefined || item.path == null || item.path.trim() == ''"
+                                        [src]="'data:image/png;base64,' + item.data" alt="">
+                                </div>
+                            </div>
+            
+                            <div class="item-hover">
+                                <div class="close-btn">
+                                    <button mat-icon-button (click)="removeImageFormList(item)">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                </div>
+                                <div class="hover-preview">
+                                    <button mat-icon-button (click)="previewImage(item)">
+                                        <mat-icon>preview</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="image-upload-footer"></div>
+                </div>
+                <input #cameraInput type="file" class="d-none" accept="image/*" multiple (change)="doAddImage($event)">
+                <div class="file-browser-result normal" *ngIf="fileList.length != undefined && fileList.length > 0">
+                    <div class="wrap-box">
+                        <div class="result-item" (click)="selectImage($event, item, itemSelected)" [class.h-normal]="!drawer.opened && this.commonService.isMobile()" [class.h-small]="drawer.opened && this.commonService.isMobile()" (dblclick)="handlerSelectImage(item)" *ngFor="let item of fileList" oncontextmenu="return false;" (contextmenu)="handlerImageContextMenuConfig($event, item, itemSelected)">
+                            <div class="item fb-image-item" #itemSelected>
+                                <div class="image">
+                                    <!-- <img [src]="'data:image/png;base64,' + item.data" alt=""> -->
+                                    <img [src]="apiUrlReadImage + '/' + item.path" alt="">
+                                </div>
+                                <div class="description" [class.d-none]="drawer.opened && this.commonService.isMobile()">
+                                    <div class="description-item">
+                                        <p>{{item.name}}</p>
+                                    </div>
+                                    <div class="description-item">
+                                        <p>{{item.size}} byte</p>
+                                    </div>
+                                    <div class="description-item">
+                                        <p>{{item.date}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="file-browser-result no-item" *ngIf="fileList.length == undefined || fileList.length <= 0">
+                    <div class="result-item">This folder is empty</div>
+                </div>
+            </mat-drawer-content>
+            </mat-drawer-container>
+    </div>
+    <div *ngIf="folderContextmenu && !data?.specTarget">
+        <app-file-browser-folder-context-menu [x]="folderContextmenuX" [y]="folderContextmenuY" (action)="handlerFolderContextMenuAction($event)"></app-file-browser-folder-context-menu>
+    </div>
+    <div *ngIf="imageContextmenu">
+        <app-file-browser-image-context-menu [hasSpecTarget]="data?.specTarget" [x]="imageContextmenuX" [y]="imageContextmenuY" (action)="handlerImageContextMenuAction($event)"></app-file-browser-image-context-menu>
+    </div>
+</div>

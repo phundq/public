@@ -1,0 +1,36 @@
+<!-- root level -->
+<mat-accordion class="simple-menu no-copy">
+    <mat-nav-list [disableRipple]="true">
+        <ng-container *ngFor="let item of simpleMenuData">
+            <mat-expansion-panel [hideToggle]="!item.hasChild" #panel>
+                <!-- menu item title -->
+                <!-- <mat-expansion-panel-header [class.child-level-1]="paddingLeftSize == 1" (click)="handlerSelectItem(item)" [class.active-menu] = "item.path === selectedItem" oncontextmenu="return false;" (contextmenu)="onRightClick($event, item); panel.open()" > -->
+                <mat-expansion-panel-header [class.child-level-1]="paddingLeftSize == 1" (click)="handlerSelectItem(item)" [class.active-menu] = "item.path === selectedItem">
+                    <mat-panel-title [ngStyle]="{'padding-left': (paddingLeftSize * 10) +'px'}">
+                        <div style="align-items: center; display: flex;">
+                            <mat-icon class="folder" *ngIf="(!panel.expanded || !item.hasChild) && item.path != selectedItem">folder</mat-icon>
+                            <mat-icon class="folder folder-open material-icons-outlined" *ngIf="(panel.expanded && item.hasChild) || item.path == selectedItem">folder_open</mat-icon>
+                            {{item.name}}
+                        </div>
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                <!-- menu item content -->
+                <ng-container>
+                    <mat-list-item>
+                        <!-- sub menu -->
+                            <app-simple-menu style="width: 100%;" 
+                                [hasSpecTarget]="hasSpecTarget"
+                                [simpleMenuData]="item.folders"
+                                [paddingLeftSize]="paddingLeftSize + 1"
+                                (selectItem)="handlerSelectItem($event)"
+                                [selectedItem] = "selectedItem"
+                                (contextMenuConfig)="handlerContextMenuConfig($event)"
+                                >
+                            </app-simple-menu>
+                    </mat-list-item>
+                </ng-container>
+
+            </mat-expansion-panel>
+        </ng-container>
+    </mat-nav-list>
+</mat-accordion>

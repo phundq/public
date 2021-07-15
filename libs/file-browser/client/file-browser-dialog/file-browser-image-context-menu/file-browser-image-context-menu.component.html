@@ -1,0 +1,7 @@
+<div class="fb-context-menu"  [ngStyle]="{'left.px': x, 'top.px': y}">
+    <ul class="menu no-copy">
+        <li class="menu-item" (click)="handlerClickChoose($event)"><mat-icon>task_alt</mat-icon>Chọn</li>
+        <li class="menu-item" (click)="handlerClickPreView($event)"><mat-icon>visibility</mat-icon>Xem</li>
+        <li class="menu-item" *ngIf="!hasSpecTarget" (click)="handlerClickDelete($event)"><mat-icon>delete_forever</mat-icon>Xóa</li>
+    </ul>
+</div>

@@ -1,0 +1,7 @@
+<div class="fb-context-menu"  [ngStyle]="{'left.px': x, 'top.px': y}">
+    <ul class="menu no-copy">
+        <li class="menu-item" (click)="handlerClickRename($event)"><mat-icon>drive_file_rename_outline</mat-icon>Đổi tên</li>
+        <li class="menu-item" (click)="handlerClickMove($event)"><mat-icon>open_with</mat-icon>Di chuyển</li>
+        <li class="menu-item" (click)="handlerClickDelete($event)"><mat-icon>delete_forever</mat-icon>Xóa</li>
+    </ul>
+</div>

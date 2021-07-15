@@ -1,0 +1,17 @@
+<div class="error-notification-dialog file-browser-folder-edit-dialog">
+    <div class="notification-header">
+        {{ 'New folder' | translate}}
+    </div>
+    <div  class="notification-body">
+        <div class="notification-message">
+           <div class="cms-field">
+               <div class="cms-label">Folder name:</div>
+               <input #folderName type="text" class="cms-input" [value]="dataEdit.name" (change)="handlerChangeName($event.target.value)" appNotSpecialCharacter>
+           </div>
+        </div>
+        <div class="btn-action">
+            <button class="cms-button" style="margin-right: 10px;" color="primary" mat-raised-button (click)="onYes()" cdkFocusInitial>{{'dialog.button.yes' | translate}}</button>
+            <button class="cms-button"  color="primary" (click)="onNo()" mat-raised-button [matDialogClose] cdkFocusInitial>{{'dialog.button.no' | translate}}</button>
+        </div>
+    </div>
+</div>

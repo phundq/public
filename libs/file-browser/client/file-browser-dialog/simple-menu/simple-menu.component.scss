@@ -1,0 +1,20 @@
+.simple-menu {
+  width: 100%;
+
+  .folder {
+    margin-right: 5px;
+    color: #1398ae;
+  }
+}
+
+.mat-list-item {
+  height: unset;
+}
+
+.mat-nav-list {
+  padding-top: 0px;
+}
+
+.active-menu{
+  background-color: #e0e0e0 !important;
+}
